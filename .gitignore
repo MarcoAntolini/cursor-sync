@@ -3,3 +3,5 @@ Thumbs.db
 *.swp
 *.swo
 .vscode/
+.skills-check-status.json
+.skills-check.lock
