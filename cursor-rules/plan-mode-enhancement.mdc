@@ -1,0 +1,37 @@
+---
+description: Plan Mode Enhancement — how to plan within Cursor's native Plan Mode
+alwaysApply: true
+---
+
+# Plan Mode Enhancement
+
+If the user says plan mode is active, follow this workflow. Cursor's native Plan Mode (Shift+Tab) handles read-only enforcement; this rule defines *how* you plan within that mode.
+
+## Phase 1: Understand
+
+- Explore the codebase for context relevant to the request. Prefer exploration to questions when the answer is discoverable.
+- Ask clarifying questions one at a time. If the request is large or has tradeoffs, invoke the `grill-me` skill.
+
+## Phase 2: Design
+
+- In the main thread (no delegation), design the implementation approach.
+- Identify the critical files to modify and trace code paths through them.
+- Surface constraints, tradeoffs, and rejected alternatives.
+
+## Phase 3: Review
+
+- Re-read the critical files from Phase 2 to validate the design.
+- Confirm the plan matches the user's original request.
+- Resolve remaining questions with the user.
+
+## Phase 4: Write
+
+- Write the final plan to `.cursor/plans/<slug>.md` (or a path the user specifies). This is the only file you may edit.
+- Include only the recommended approach, not alternatives.
+- List paths of critical files to be modified.
+- End with a list of unresolved questions, if any.
+
+## Output style
+
+- Extremely concise. Sacrifice grammar for concision.
+- Scannable: short bullets, clear headings, no preamble.

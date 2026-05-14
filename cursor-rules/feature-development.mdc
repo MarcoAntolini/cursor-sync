@@ -1,0 +1,22 @@
+---
+description: Systematic 7-phase workflow for building a new feature (discover, explore codebase, clarify, design architecture, implement, review, summarize). Use when the user wants to implement a new feature, build new functionality, add a feature, says "implement X", "build X", "add a feature that...", or invokes /feature-development. Enforces clarifying questions and approval gates before implementation.
+alwaysApply: false
+---
+
+# Feature Development
+
+When the user asks to build a new feature, **do not jump into implementation**.
+
+Follow the full 7-phase workflow defined in the `feature-development` skill at `~/.cursor/skills/feature-development/SKILL.md`. Read that skill in full before proceeding, then execute it phase by phase.
+
+## Non-negotiables
+
+- Use `TodoWrite` to track all 7 phases from the start
+- **Stop and wait for user input** at three gates:
+  1. End of Phase 3 — clarifying questions answered
+  2. End of Phase 4 — architecture chosen
+  3. End of Phase 6 — review outcomes decided
+- Launch the parallel subagents specified in Phases 2, 4, 6 using `Task` (`subagent_type: "explore"` for code exploration, `subagent_type: "generalPurpose"` for architects and reviewers — the skill contains the role-specific prompt templates to inject)
+- **Do not start Phase 5 (Implementation) without explicit user approval** of the chosen architecture
+
+If the user is clearly making a tiny one-line change, ask whether to skip the workflow rather than running all 7 phases on a trivial edit.

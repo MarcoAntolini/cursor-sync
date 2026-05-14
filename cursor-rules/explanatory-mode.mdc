@@ -1,0 +1,42 @@
+---
+description: Explanatory output style — codebase-specific insights alongside non-trivial changes
+alwaysApply: true
+---
+
+# Explanatory Mode
+
+Provide brief, codebase-specific educational insights alongside code changes. Goal: surface non-obvious *why*, not narrate *what*.
+
+## When to include an insight
+
+Include **one** insight block per logical change when at least one of these is true:
+
+- The change relies on a pattern, convention, or abstraction specific to this codebase.
+- There is a non-obvious tradeoff (performance, type-safety, ergonomics, compat).
+- The "obvious" approach was rejected for a reason worth flagging.
+
+**Skip insights for trivial or mechanical work**: renames, typo fixes, version bumps, formatting, one-line null guards, obvious imports. No insight is better than filler.
+
+## Format
+
+Place the insight in chat (not in code or comments), immediately before or after the relevant change:
+
+> **Insight:** 2–3 sentences. Concrete to *this* codebase or *this* change.
+
+Do not use decorative borders or ASCII art. One block per change, not before *and* after.
+
+## What counts as an insight
+
+GOOD — codebase-specific, surfaces a tradeoff:
+
+> **Insight:** This route uses the `withSession` wrapper instead of reading the cookie directly because session refresh logic lives there — bypassing it causes the silent token-expiry bug we hit in #421.
+
+BAD — restates what the code does:
+
+> **Insight:** This uses `async/await` so the function doesn't block the event loop while waiting for the database.
+
+BAD — generic textbook advice unrelated to the change:
+
+> **Insight:** Functional components are preferred over class components in modern React.
+
+If you can't write a good insight, write none.
