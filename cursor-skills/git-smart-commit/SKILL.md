@@ -30,6 +30,7 @@ Spec: [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0
 6. Write the full message per **Commit message structure** below, then commit:
    - Prefer `git commit -m "header" -m "body and footers"` (or equivalent) so the blank line between header and body is preserved.
    - Do **not** push unless the user explicitly asked to push in the same request.
+7. After a **successful** commit, **always show the user the full commit message in the chat**—the exact text Git recorded (header, body, footers). Use `git log -1 --format=%B` or paste the same message you passed to `git commit`; do not summarize or omit it.
 
 ## Commit message structure (Conventional Commits 1.0.0)
 

@@ -2,9 +2,9 @@
 name: git-merge-into-branch
 description: >-
   Merges the branch you were on into a named target branch (checkout target,
-  merge source), then switches back to the original branch. Use when the user
-  wants to land current work on another branch without staying on the target,
-  or invokes merge-into-branch workflows.
+  merge source), pushes the target branch, then switches back to the original
+  branch. Use when the user wants to land current work on another branch without
+  staying on the target, or invokes merge-into-branch workflows.
 disable-model-invocation: true
 ---
 
@@ -38,6 +38,7 @@ If `source` and `target` are the same, report that and stop.
 
 ## Aftermath
 
-- After a **successful** merge (no conflicts, merge completed): `git switch source` so HEAD returns to the **original** branch you started on.
-- Do **not** push unless the user explicitly asked to push in the same message.
+- After a **successful** merge (no conflicts, merge completed): while still on **`target`**, **push** that branch (`git push` when an upstream exists; otherwise `git push -u origin <target>` when remote `origin` exists—if there is no remote, no `origin`, or push fails, report the error and **stay on `target`**; do not switch back to **`source`** until push succeeds or the user explicitly says in this thread to skip push and switch back).
+- After the push **succeeds**: `git switch source` so HEAD returns to the **original** branch you started on.
+- Do **not** push **`source`** or any other branch as part of this workflow unless the user explicitly asked for that in the same message.
 - No `rebase`, `--force`, `reset --hard`, or history rewrite unless explicitly requested.
