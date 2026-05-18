@@ -1,80 +1,70 @@
-# Changelog reference (Keep a Changelog + SemVer)
+# Changelog reference
 
-Official specs:
 - [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/)
 - [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html)
 
-## Good bullets (any project)
+## SemVer decision (Workflow B)
 
-```markdown
-### Added
-- OAuth2 refresh-token support for API clients.
+| `[Unreleased]` contains | Bump from latest `X.Y.Z` |
+|-------------------------|---------------------------|
+| Fixes only, no breaking surface | **PATCH** `Z+1` |
+| New backwards-compatible features | **MINOR** `Y+1`, reset `Z` to 0 |
+| Breaking changes users must handle | **MAJOR** `X+1` (on `0.y.z`, often **MINOR** — state why) |
 
-### Changed
-- Default request timeout increased from 30s to 60s.
+Pre-release (`1.0.0-alpha.1`) only if the project already uses that style.
 
-### Fixed
-- Pagination cursor no longer resets on empty pages.
+## Version manifests to search and bump
+
+Find the **current** release version (from changelog), then update matching fields to **newVersion**:
+
+| Location | Field / pattern |
+|----------|-----------------|
+| `package.json` | `"version": "…"` |
+| `package-lock.json` | top-level `"version"` only if it mirrors the package (often auto-regenerated; mention if user should run `npm install`) |
+| `pyproject.toml` | `version = "…"` under `[project]` |
+| `Cargo.toml` | `version = "…"` under `[package]` |
+| `composer.json` | `"version": "…"` |
+| `*.gemspec` | `spec.version = "…"` |
+| `gradle.properties` / `build.gradle.kts` | `version=…` / `version = "…"` |
+| `Chart.yaml` | `version:` |
+| `thunderstore.toml` | `versionNumber = "…"` under `[package]` |
+| `setup.py` / `__version__` | project-specific |
+
+**Never treat as product semver:** `schemaVersion`, `apiVersion`, `formatVersion`, `lockfile` dependency entries, CI action versions.
+
+## Bump examples
+
+**thunderstore.toml**
+
+```toml
+versionNumber = "0.2.0"   →   versionNumber = "0.3.0"
 ```
 
-## Poor bullets (avoid)
+**package.json**
+
+```json
+"version": "0.2.0"   →   "version": "0.3.0"
+```
+
+## Good vs poor bullets
+
+**Good**
+
+```markdown
+### Changed
+- Removed `guaranteeFieldNPCs`; per-NPC `fieldNPCs.*` toggles now control field guarantees.
+```
+
+**Poor**
 
 ```markdown
 ### Misc
-- Updated files
-
-### Added
-- src/main.rs, lib/foo.ts
-- various fixes
+- updated src/tracker.lua
 ```
 
-## SemVer quick decision
+## Release checklist (Workflow B)
 
-| Unreleased contains | Bump |
-|---------------------|------|
-| Only fixes, no API/config break | PATCH |
-| New features, backwards compatible | MINOR |
-| Breaking API, removed public options, incompatible migrations | MAJOR (or MINOR if `0.y.z`) |
-
-Pre-release labels (`1.0.0-alpha.1`) only when the project already uses them.
-
-## Version manifest discovery
-
-At release time, search the repo (or the package path the user cares about) for **product version** fields. Common locations — use what exists; ignore what does not:
-
-| Ecosystem / tool | File(s) | Typical key / field |
-|------------------|---------|---------------------|
-| Node.js | `package.json` | `version` |
-| Python | `pyproject.toml`, `setup.cfg` | `version` |
-| Rust | `Cargo.toml` | `package.version` |
-| .NET | `*.csproj` | `<Version>` |
-| Java / Kotlin | `gradle.properties`, `build.gradle.kts` | `version` |
-| Ruby | `*.gemspec`, `lib/**/version.rb` | `version` |
-| Go | — | often git tags only; check `README` / release docs |
-| PHP | `composer.json` | `version` |
-| iOS / macOS | `Info.plist`, Xcode project | `CFBundleShortVersionString` |
-| Android | `build.gradle.kts` | `versionName` |
-| Helm / K8s | `Chart.yaml` | `version` |
-| Terraform module | often tags only | — |
-| Thunderstore / tcli | `thunderstore.toml` | `[package]` `versionNumber` |
-| Generic TOML/YAML | `manifest.toml`, `app.yml`, etc. | `version`, `appVersion` |
-
-**Usually not product semver** (do not bump to match changelog without user confirmation):
-
-- `schemaVersion`, `apiVersion`, `formatVersion` (file/schema format)
-- Dependency versions inside lockfiles
-- CI or linter config versions
-
-## Release checklist (tell user when releasing)
-
-- [ ] `CHANGELOG.md`: `[Unreleased]` renamed to `[X.Y.Z] - YYYY-MM-DD`; new empty `[Unreleased]` added
-- [ ] Discovered version manifest(s) set to `X.Y.Z` (if user requested bumps)
-- [ ] Git tag `vX.Y.Z` or `X.Y.Z` (if the project tags releases — match existing tag style)
-- [ ] Release notes / GitHub Release / store listing (if the project uses them)
-
-## When KAC does not apply
-
-If the repo has no `CHANGELOG.md` or uses only GitHub Releases:
-
-- Offer to draft release notes in KAC style, or
-- Ask the user which file or tag message to update.
+- [ ] `[Unreleased]` refreshed from git
+- [ ] New `## [X.Y.Z] - date` section created; empty `[Unreleased]` above it
+- [ ] All product version manifests match `X.Y.Z`
+- [ ] User commits (`/commit-all`) and runs publish/tag/CI as needed

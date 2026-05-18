@@ -1,11 +1,11 @@
 ---
 name: update-changelog
 description: >-
-  Updates CHANGELOG.md under [Unreleased] from git changes (working tree and
-  optional recent commits), following Keep a Changelog 1.1.0 and Semantic
-  Versioning 2.0.0. Works across languages and project types; discovers version
-  manifests at release time. Use when the user asks to update the changelog,
-  refresh [Unreleased], document changes since last commit, or prepare a release.
+  Maintains CHANGELOG.md per Keep a Changelog 1.1.0. Two workflows: refresh
+  [Unreleased] from git (update-changelog command), or cut a semver release and
+  bump version manifests (update-changelog-release command). Use when the user
+  invokes those commands, asks to update the changelog, refresh Unreleased, or
+  release a new version with aligned package versions.
 disable-model-invocation: true
 ---
 
@@ -13,108 +13,150 @@ disable-model-invocation: true
 
 Specs: [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/) · [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html)
 
-Language- and stack-agnostic: use **git** for changes and **KAC** for prose. Do not assume a specific package manager, mod platform, or repo layout beyond a changelog file.
+Stack-agnostic. Use **git** for source-of-truth on changes and **KAC** for changelog prose.
 
-## When to use
+## Command routing
 
-- User wants `CHANGELOG.md` updated with work **since the last commit** (uncommitted + staged).
-- User wants `[Unreleased]` filled before a release.
-- User asks which **semver** bump fits the accumulated changes.
-- User is preparing a release and needs version files aligned with the new changelog section.
+| User invokes | Run |
+|--------------|-----|
+| **`/update-changelog`** | [Workflow A — Unreleased only](#workflow-a--unreleased-only) |
+| **`/update-changelog-release`** | [Workflow A](#workflow-a--unreleased-only), then [Workflow B — Release](#workflow-b--release) (includes version manifest bumps) |
 
-## Workflow
+Do **not** cut a release or bump `package.json` / `thunderstore.toml` / etc. unless the user used **`update-changelog-release`** (or explicitly asked for a full release in the same message).
 
-1. **Locate changelog** — default `CHANGELOG.md` at repo root; use `CHANGELOG` or a path the user gives if the project differs. Read it fully. If the project does not use KAC, say so and follow the user’s format or suggest adopting KAC.
-2. **Gather changes** (parallel when possible):
+---
+
+## Shared preparation
+
+1. **Locate changelog** — default `CHANGELOG.md` at repo root; accept a user-provided path. Read the full file.
+2. **Ensure KAC header** exists (add if missing, keep if present):
+
+```markdown
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+```
+
+3. **Ensure `## [Unreleased]`** exists as the **first** version section (create empty section if missing).
+4. **Gather changes** (parallel when possible):
    - `git status`
    - `git diff` and `git diff --staged`
-   - `git log -1 --oneline` (context for “since last commit”)
-   - Optional: `git log -10 --oneline` and `git diff HEAD~N..HEAD` only when the user asked to include **recent commits**, not only the working tree.
-3. **Infer notable changes** from diffs and commit messages. Group into KAC categories (below). Write for **humans**, not a file list.
-4. **Edit only `[Unreleased]`** unless the user explicitly asked to **cut a release** (see Release workflow).
-5. **Merge, don’t duplicate**: if a bullet already states the same change, refine it instead of adding a second line.
-6. **Show the user** the new or updated `[Unreleased]` section in the reply.
+   - `git log -1 --oneline`
+   - **Only for Workflow A with `commits` argument** (see command file): also `git log` since last release tag or since the newest `## [X.Y.Z]` in the changelog, plus matching `git diff`.
+
+---
 
 ## Keep a Changelog rules (required)
 
-- Prefer file name `CHANGELOG.md`; format [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
-- **Newest version at the top**; `[Unreleased]` **must** be the first version section.
-- Use exactly these change-group headings (only include sections that apply):
-  - `### Added` — new features
-  - `### Changed` — changes in existing functionality
-  - `### Deprecated` — soon-to-be removed
-  - `### Removed` — removed features
-  - `### Fixed` — bug fixes
-  - `### Security` — vulnerabilities
-- **Do not** use custom sections (no “Documentation”, “Internal”, “Misc”).
-- Each bullet: **concise**; prefer clear **user impact**. Link issues/PRs when IDs are known.
-- **Do not** dump raw commit messages or every touched path.
+- Use only these section headings under a version (omit empty sections):
+  - `### Added` · `### Changed` · `### Deprecated` · `### Removed` · `### Fixed` · `### Security`
+- **No** custom sections (“Documentation”, “Misc”, “Internal”).
+- Bullets: concise, **user impact**, not file paths. Link `#123` / PRs when known.
+- **Merge** with existing `[Unreleased]` bullets; refine duplicates instead of repeating.
 
-Map from diffs (guide, not rigid):
-
-| Signal in diff | Section |
-|----------------|---------|
-| New files, features, options, APIs | Added |
-| Behavior/config/docs adjustments | Changed |
+| Signal | Section |
+|--------|---------|
+| New feature, option, API | Added |
+| Behavior or config change | Changed |
 | Bug fix | Fixed |
-| Deleted feature or option | Removed |
-| `SECURITY`, CVE, auth fix | Security |
-| “Will be removed” warnings | Deprecated |
+| Removed feature / option | Removed |
+| CVE / security fix | Security |
+| Soon removed | Deprecated |
 
-## Map conventional commits → KAC (when using commit log)
-
-| Commit type | Usually KAC |
-|-------------|-------------|
-| `feat` | Added (or Changed if only extending behavior) |
+| Conventional commit | Usually |
+|--------------------|---------|
+| `feat` | Added (or Changed) |
 | `fix` | Fixed |
-| `docs` | Changed (if user-facing) or skip if trivial |
+| `docs` | Changed if user-facing; else skip |
 | `refactor`, `perf` | Changed |
-| `BREAKING CHANGE` / `!` | Changed + note breaking, or Removed |
-| `chore`, `ci`, `build` | Omit unless user-visible |
+| `!` / `BREAKING CHANGE` | Changed + breaking note, or Removed |
+| `chore`, `ci`, `build` | Skip unless user-visible |
 
-## `[Unreleased]` template
+Details: [reference.md](reference.md)
 
-If missing, add after the intro blurb (keep existing KAC/semver intro lines if present):
+---
 
-```markdown
-## [Unreleased]
+## Workflow A — Unreleased only
 
-### Added
+**Goal:** Document work in progress under `[Unreleased]`. **Do not** rename the section or bump package versions.
 
-- …
+1. Complete [Shared preparation](#shared-preparation).
+2. Update **`## [Unreleased]`** from git (working tree by default; include recent commits only if the command says so).
+3. **Do not** edit released version sections.
+4. In the reply, show the full updated **`## [Unreleased]`** block.
+5. If `[Unreleased]` is non-empty, add a short **suggested next version** line (e.g. “Likely **0.3.0** (MINOR) when you release — use `/update-changelog-release`.”). Do **not** cut the release in this workflow.
 
-### Changed
+---
 
-- …
-```
+## Workflow B — Release
 
-Omit empty `###` sections entirely.
+**Goal:** Ship what is in `[Unreleased]` as a dated version and align product version fields across the repo.
 
-## Release workflow (only when user asks to release)
+### B1 — Refresh Unreleased
 
-1. Decide **semver** from accumulated `[Unreleased]` content ([SemVer 2.0.0](https://semver.org/spec/v2.0.0.html)):
-   - **MAJOR**: incompatible API/behavior changes users must react to.
-   - **MINOR**: backwards-compatible new functionality.
-   - **PATCH**: backwards-compatible bug fixes only.
-   - For `0.y.z` initial development, **MINOR** may include breaking changes; still document breaks clearly.
-   - If the project uses **CalVer** or another scheme, follow existing changelog conventions and say which bump you recommend.
-2. Rename `[Unreleased]` → `## [X.Y.Z] - YYYY-MM-DD` (ISO 8601 date, today unless user says otherwise).
-3. Add a fresh empty `## [Unreleased]` at the top.
-4. **Discover version manifests** (read-only scan; see [reference.md](reference.md)). List files/keys that should match `X.Y.Z`. **Only edit** them if the user asked to bump versions in the same task.
-5. **Do not bump** keys that are **not** product semver (e.g. `schemaVersion`, `apiVersion`, lockfile versions, tool config schema ids). When unsure, name the field and ask.
+Run [Workflow A](#workflow-a--unreleased-only) first so `[Unreleased]` matches current git state (including uncommitted work that belongs in this release).
 
-## Monorepos and multiple packages
+### B2 — Choose semver
 
-- Ask which package or path the changelog entry is for, or use the path the user’s diff touches.
-- One `[Unreleased]` may not fit all packages; prefer separate changelogs or prefixed bullets if the repo already does.
+1. Read the **latest released** version from the changelog (first `## [X.Y.Z]` or `## [X.Y.Z] - date` below `[Unreleased]`).
+2. Classify everything under `[Unreleased]` using [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html):
+   - **PATCH** — backwards-compatible fixes only.
+   - **MINOR** — backwards-compatible features.
+   - **MAJOR** — incompatible API/behavior users must react to.
+   - **`0.y.z`** — MINOR may include breaking changes; document breaks in bullets.
+3. Compute **newVersion** = bumped latest (e.g. `0.2.0` + MINOR → `0.3.0`).
+4. State **newVersion** and **rationale** in the reply before editing files.
+
+If `[Unreleased]` is empty, stop and tell the user there is nothing to release.
+
+### B3 — Cut changelog
+
+1. Rename `## [Unreleased]` → `## [newVersion] - YYYY-MM-DD` (ISO 8601; use today unless the user gave a date).
+2. Move all `### Added` / `### Changed` / … content under the new heading (unchanged bullets).
+3. Insert a new empty `## [Unreleased]` **above** the new version (still below the intro blurb).
+
+### B4 — Bump version manifests
+
+Discover and **edit** every **product semver** field in the repo so it matches **newVersion**. See [reference.md](reference.md) for common paths.
+
+**Process:**
+
+1. Search the repo for the **current** version string (from B2’s “latest released”) in likely manifests.
+2. Update only fields that hold the **package / app version** (not schema or API format versions).
+3. Prefer precise edits (same string format: quoted semver, no `v` prefix unless the file already uses it).
+4. If multiple packages exist (monorepo), bump only the package(s) this changelog describes; ask if unclear.
+
+**Do not bump:** `schemaVersion`, `apiVersion`, `lockfile` dependency versions, tool config schema ids.
+
+**Thunderstore / tcli:** `[package]` `versionNumber = "X.Y.Z"` only — never `[config]` `schemaVersion`.
+
+### B5 — Reply summary
+
+Include:
+
+1. **newVersion** and semver rationale  
+2. The new **`## [newVersion] - date`** section (copy from file)  
+3. Table: **file · key · old → new** for every manifest updated  
+4. Reminder: run `/commit-all` and your project’s publish/tag workflow if not asked to commit here  
+5. **Do not** `git commit`, `git push`, or `git tag` unless the user explicitly requested it in the same message
+
+---
+
+## Monorepos
+
+- One changelog per package, or ask which path the release is for.
+- Bump only manifests for that package.
 
 ## What not to do
 
-- Do not remove or rewrite **released** version sections unless the user asked.
-- Do not add `[Unreleased]` entries for changes already listed under a released version.
-- Do not invent changes not supported by git diff / commits.
-- Do not assume Thunderstore, npm, or any single ecosystem.
+- Invent changelog bullets not supported by git or existing `[Unreleased]` text.
+- Cut a release in Workflow A.
+- Leave version manifests on the old number after Workflow B.
+- Rewrite history in released changelog sections.
 
 ## Additional reference
 
-- Version manifest table, examples, release checklist: [reference.md](reference.md)
+- Manifest table, bump examples, checklist: [reference.md](reference.md)

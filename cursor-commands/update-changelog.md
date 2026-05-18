@@ -1,27 +1,20 @@
-# Update changelog
+# Update changelog (Unreleased only)
 
-Follow the skill **update-changelog** at `.cursor/skills/update-changelog/SKILL.md`. Read and apply it completely ([Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html)).
+Follow **Workflow A — Unreleased only** in `.cursor/skills/update-changelog/SKILL.md`. Read the skill’s [Shared preparation](#shared-preparation) and KAC rules first.
 
-## Default (no arguments)
+## Do
 
-1. Locate `CHANGELOG.md` (or path the project uses).
-2. Update **`## [Unreleased]`** from **uncommitted + staged** changes (`git diff`, `git diff --staged`, `git status`).
-3. Merge with existing bullets; do not duplicate.
-4. Show the updated `[Unreleased]` section in the reply.
+1. Update **`CHANGELOG.md`** → **`## [Unreleased]`** from **uncommitted + staged** changes (`git status`, `git diff`, `git diff --staged`).
+2. Merge with existing bullets; do not duplicate.
+3. Show the full updated **`## [Unreleased]`** section in the reply.
+4. If `[Unreleased]` has content, state the **suggested next semver** (PATCH / MINOR / MAJOR) and remind me to use **`/update-changelog-release`** when I am ready to ship.
 
-## Optional arguments
+## Optional argument
 
-If I passed **`commits`** (or "recent commits"): also include changes from recent commits per the skill, not only the working tree.
+If I passed **`commits`** (or “recent commits”): also include changes from commits after the latest released changelog version (or after the latest git release tag), not only the working tree.
 
-If I passed **`release`** (or "cut release"):
+## Do not
 
-1. Complete the default update if `[Unreleased]` is still empty or stale.
-2. Run the skill's **release workflow**: semver recommendation, rename `[Unreleased]` → `[X.Y.Z] - YYYY-MM-DD`, add a new empty `[Unreleased]`.
-3. **Discover** version manifests in the repo and **list** files/keys that should match `X.Y.Z`.
-4. **Do not** edit version manifests or create git tags unless I explicitly asked to bump versions or tag in this message.
-
-## Constraints
-
-- Do not commit, push, or tag unless I ask separately (e.g. `/commit-all`, `/push-branch`).
-- Do not invent changes unsupported by git.
-- Stack- and language-agnostic; do not assume a specific package ecosystem.
+- Rename `[Unreleased]` or add a dated version section.
+- Edit `package.json`, `thunderstore.toml`, or any other version manifest.
+- `git commit`, `git push`, or `git tag` (use `/commit-all`, `/push-branch`, or your release workflow separately).
