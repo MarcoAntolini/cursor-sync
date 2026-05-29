@@ -224,6 +224,15 @@
       "skillFolderHash": "743fba3540a3593f15d548935f08f74788e76d3d",
       "installedAt": "2026-05-28T15:31:15.196Z",
       "updatedAt": "2026-05-28T15:31:15.196Z"
+    },
+    "readme-wizard": {
+      "source": "debs-obrien/learn-agent-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/debs-obrien/learn-agent-skills.git",
+      "skillPath": ".agents/skills/readme-wizard/SKILL.md",
+      "skillFolderHash": "600e9b455a4a539b845d2d54491bbdb1d2984b91",
+      "installedAt": "2026-05-29T15:57:20.079Z",
+      "updatedAt": "2026-05-29T15:57:20.079Z"
     }
   },
   "dismissed": {
