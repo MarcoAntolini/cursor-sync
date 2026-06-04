@@ -35,10 +35,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/mattpocock/skills.git",
       "skillPath": "skills/engineering/grill-with-docs/SKILL.md",
-      "skillFolderHash": "2c6aa7079cc705a6e0c319fcf23a0fa39968de29",
-      "pluginName": "mattpocock-skills",
+      "skillFolderHash": "2c3a4e48571bfe42203ed7b49cae85f31ef4b6f2",
       "installedAt": "2026-05-13T09:06:16.347Z",
-      "updatedAt": "2026-05-25T15:22:20.370Z"
+      "updatedAt": "2026-06-04T19:11:36.468Z"
     },
     "handoff": {
       "source": "mattpocock/skills",
@@ -103,10 +102,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/mattpocock/skills.git",
       "skillPath": "skills/engineering/to-prd/SKILL.md",
-      "skillFolderHash": "d6eff3e99a325d2d9c2acbe31b4d76fa5340a154",
-      "pluginName": "mattpocock-skills",
+      "skillFolderHash": "fb4503f54bc618da08df2fd74109fbe57e4d8150",
       "installedAt": "2026-05-25T15:22:20.405Z",
-      "updatedAt": "2026-05-25T15:22:20.405Z"
+      "updatedAt": "2026-06-04T19:11:37.739Z"
     },
     "brandkit": {
       "source": "Leonxlnx/taste-skill",
@@ -233,9 +231,33 @@
       "skillFolderHash": "600e9b455a4a539b845d2d54491bbdb1d2984b91",
       "installedAt": "2026-05-29T15:57:20.079Z",
       "updatedAt": "2026-05-29T15:57:20.079Z"
+    },
+    "fallow": {
+      "source": "fallow-rs/fallow-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/fallow-rs/fallow-skills.git",
+      "skillPath": "fallow/skills/fallow/SKILL.md",
+      "skillFolderHash": "2d1f673654db36de5e89bc48c870ec1d2104dd77",
+      "installedAt": "2026-06-04T19:11:02.764Z",
+      "updatedAt": "2026-06-04T19:11:02.764Z"
     }
   },
   "dismissed": {
     "findSkillsPrompt": true
-  }
+  },
+  "lastSelectedAgents": [
+    "amp",
+    "antigravity",
+    "antigravity-cli",
+    "cline",
+    "codex",
+    "cursor",
+    "deepagents",
+    "gemini-cli",
+    "github-copilot",
+    "kimi-code-cli",
+    "opencode",
+    "warp",
+    "zed"
+  ]
 }
