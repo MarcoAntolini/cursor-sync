@@ -237,9 +237,19 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/fallow-rs/fallow-skills.git",
       "skillPath": "fallow/skills/fallow/SKILL.md",
-      "skillFolderHash": "2d1f673654db36de5e89bc48c870ec1d2104dd77",
+      "skillFolderHash": "01d8a8b865352c40ebb922a8414859ebe156b1c5",
       "installedAt": "2026-06-04T19:11:02.764Z",
-      "updatedAt": "2026-06-04T19:11:02.764Z"
+      "updatedAt": "2026-06-09T17:25:22.880Z"
+    },
+    "teach": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/productivity/teach/SKILL.md",
+      "skillFolderHash": "fdc61615b4d56a04d88a69a135337f0cad9df235",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-06-09T17:25:10.701Z",
+      "updatedAt": "2026-06-09T17:25:10.701Z"
     }
   },
   "dismissed": {
