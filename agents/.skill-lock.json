@@ -250,6 +250,24 @@
       "pluginName": "mattpocock-skills",
       "installedAt": "2026-06-09T17:25:10.701Z",
       "updatedAt": "2026-06-09T17:25:10.701Z"
+    },
+    "deslop": {
+      "source": "cursor/plugins",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/cursor/plugins.git",
+      "skillPath": "cursor-team-kit/skills/deslop/SKILL.md",
+      "skillFolderHash": "ac9ba043f9dd3b3a8850de6624ec5bc12e375599",
+      "installedAt": "2026-06-17T08:16:49.672Z",
+      "updatedAt": "2026-06-17T08:16:49.672Z"
+    },
+    "thermo-nuclear-code-quality-review": {
+      "source": "cursor/plugins",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/cursor/plugins.git",
+      "skillPath": "cursor-team-kit/skills/thermo-nuclear-code-quality-review/SKILL.md",
+      "skillFolderHash": "d9c8935dd560b3b6f5941247d04a1843f8c7cc35",
+      "installedAt": "2026-06-17T08:17:41.664Z",
+      "updatedAt": "2026-06-17T08:17:41.664Z"
     }
   },
   "dismissed": {
