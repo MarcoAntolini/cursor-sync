@@ -1,0 +1,8 @@
+---
+description: Keep changelogs updated after repo changes
+alwaysApply: true
+---
+
+# Changelog Updates
+
+After changing a repository that contains `CHANGELOG.md`, update it using the `update-changelog` skill.
