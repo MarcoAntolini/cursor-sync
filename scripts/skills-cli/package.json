@@ -1,0 +1,25 @@
+{
+  "name": "skills-tree",
+  "version": "0.1.0",
+  "description": "Hierarchy-aware wrapper around the official skills CLI — preserves nested skill locations on update",
+  "type": "module",
+  "bin": {
+    "skills-tree": "./bin/skills-tree.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "skills",
+    "agents",
+    "cli",
+    "skills.sh"
+  ],
+  "license": "MIT",
+  "private": true
+}

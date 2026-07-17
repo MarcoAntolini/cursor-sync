@@ -17,4 +17,4 @@ If I passed **`commits`** (or “recent commits”): also include changes from c
 
 - Rename `[Unreleased]` or add a dated version section.
 - Edit `package.json`, `thunderstore.toml`, or any other version manifest.
-- `git commit`, `git push`, or `git tag` (use `/commit-all`, `/push-branch`, or your release workflow separately).
+- `git commit`, `git push`, or `git tag` (use skills `git-commit`, `git-push-branch`, or your release workflow separately).

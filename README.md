@@ -9,12 +9,12 @@ Personal [Cursor](https://cursor.com) configuration in Git: rules, slash command
 | ------------------ | -------------------------------------- | ----------------------------------------------------------------------- |
 | `cursor-rules/`    | User rules (`~/.cursor/rules/`)        | Always-on or requestable guidance (`.mdc` files)                        |
 | `cursor-skills/`   | User skills (`~/.cursor/skills/`)      | Agent skills (TDD, Playwright, git helpers, framework experts, etc.)    |
-| `cursor-commands/` | Slash commands (`~/.cursor/commands/`) | Short prompts that delegate to skills (e.g. `commit-all`, `fetch-pull`) |
+| `cursor-commands/` | Slash commands (`~/.cursor/commands/`) | Short prompts (e.g. changelog helpers). Prefer skills for git workflows. |
 | `agents/skills/`   | Agent skills (`~/.agents/skills/`)     | Cross-agent skills (diagnose, handoff, grill-me, …)                     |
-| `scripts/`         | *(not installed into Cursor)*          | `csync` sync helper and optional pull-on-start for your shell profile   |
+| `scripts/`         | *(not installed into Cursor)*          | `csync`, pull-on-start, and hierarchy-aware `skills` CLI wrappers   |
 
 
-Slash commands in `cursor-commands/` reference skills under `.cursor/skills/…`. With the layout below, that path is satisfied by linking `~/.cursor/skills` to this repo’s `cursor-skills/` folder.
+Git workflows live as **user skills** under `cursor-skills/` (linked to `~/.cursor/skills/`). Invoke them by name in chat — start with the `git` router skill for the menu. Slash commands that still exist are thin prompts, not git entry points.
 
 This repo does **not** include Cursor’s built-in `~/.cursor/skills-cursor/` skills.
 
@@ -64,8 +64,8 @@ If a real folder already exists at the target (e.g. `~/.cursor/rules`), rename o
 
 1. Restart Cursor (or reload the window).
 2. **Settings → Rules**: you should see rules from `cursor-rules/`.
-3. In chat, type `/` and check for commands like `commit-all`, `fetch-pull`.
-4. Ask the agent to use a skill by name (e.g. TDD, diagnose) or invoke a slash command that points at one.
+3. In chat, invoke a skill by name (e.g. `git`, `git-commit`, TDD, diagnose).
+4. Optionally type `/` for remaining slash commands (e.g. changelog helpers).
 
 ## Alternative: copy instead of link
 
@@ -140,6 +140,35 @@ source ~/cursor-sync/scripts/pull-on-start.sh
 ```
 
 Respects `CURSOR_SYNC` the same way as `csync`. Skip this if you prefer to pull manually or only use `csync` on that machine.
+
+### Nested skills CLI: `skills` (optional)
+
+Global agent skills often live in nested folders under `~/.agents/skills/` (for example `mattpocock/…`). The official `npx skills update` flattens them. [`scripts/skills-cli/`](scripts/skills-cli/) is a hierarchy-aware wrapper (`skills-tree`) that updates skills in place and keeps nested paths.
+
+**Windows (PowerShell)** — add to `$PROFILE`:
+
+```powershell
+. "$env:USERPROFILE\cursor-sync\scripts\skills.ps1"
+```
+
+**macOS / Linux:**
+
+```bash
+source ~/cursor-sync/scripts/skills.sh
+```
+
+Reload the shell, then:
+
+```bash
+skills check                 # should print a skills-tree header first
+skills update                # update, preserving nested locations
+skills locations             # list root vs nested installs
+Get-Command skills           # PowerShell: confirm it points at skills-tree
+```
+
+If `skills check` hangs with only a GitHub rate-limit message and **no** `skills-tree` header, you are hitting the official CLI directly (wrapper not loaded) or unauthenticated API limits — run `gh auth login` / set `GITHUB_TOKEN`, then re-source the wrapper above.
+
+Other commands are forwarded to `npx skills`. See [`scripts/skills-cli/README.md`](scripts/skills-cli/README.md).
 
 ### Manual sync
 

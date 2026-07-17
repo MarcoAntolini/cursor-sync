@@ -5,3 +5,4 @@ Thumbs.db
 .vscode/
 .skills-check-status.json
 .skills-check.lock
+.skills-staging/

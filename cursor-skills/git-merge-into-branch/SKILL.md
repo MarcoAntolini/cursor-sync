@@ -1,44 +1,31 @@
 ---
 name: git-merge-into-branch
-description: >-
-  Merges the branch you were on into a named target branch (checkout target,
-  merge source), pushes the target branch, then switches back to the original
-  branch. Use when the user wants to land current work on another branch without
-  staying on the target, or invokes merge-into-branch workflows.
+description: Merges the branch you started on into a named target, pushes the target, then switches back.
 disable-model-invocation: true
 ---
 
 # Git merge into target branch
 
-## Meaning (non-negotiable)
+**Land** means: `target` receives a merge of the branch you started on (`source`), then you return to `source`.
 
-**“Merge current into `<target>`”** means: **`<target>`** ends up containing a merge of **the branch you started on** (`source`).
+`target` = branch name from this message (trimmed). If missing or ambiguous, ask once and stop.
 
-1. Record `source =` current branch (`git branch --show-current`).
-2. `target` = branch name **the user provided** in the same chat as the command (trim whitespace). If missing or ambiguous, ask once; do not guess names.
+## Steps
 
-If `source` and `target` are the same, report that and stop.
+1. `source =` `git branch --show-current`. If `source` equals `target`, report and stop.
+2. `git status --short`. Uncommitted changes → stop; do not stash/discard unless told in this message.
+3. `git fetch --all` when network is allowed (else use existing refs and say so).
+4. Resolve `target`:
+   - Local exists → use it
+   - Else `origin/target` exists → `git switch -c target --track origin/target` (or `git switch target` if Git creates the tracking branch)
+   - Else → report missing; stop (do not invent branches)
+5. `git switch target` then `git merge source` (repo defaults for ff/merge).
+6. Conflicts → list files, stay on `target`, stop for manual resolve/abort.
+7. After a clean merge: push `target` (`git push`, or `git push -u origin <target>` if no upstream). Push failure or no remote → stay on `target`, report; switch back only after push succeeds or the user says to skip push and switch back.
+8. After push succeeds: `git switch source`.
+9. **Done when:** `target` contains the merge, push succeeded (or skip authorized), and HEAD is back on `source` — or you stopped at a hard stop above.
 
-## Preconditions
+## Guardrails
 
-1. Run `git status --short`. If there are **uncommitted** changes, **stop** and tell the user to commit, stash, or discard—do not stash or discard unless they explicitly instruct that in this thread.
-2. `git fetch --all` so local refs for `target` / `source` are reasonably current (unless the user forbids network; then use existing refs and say so).
-
-## Resolve `target`
-
-- If local branch `target` exists: use it.
-- Else if `origin/target` exists after fetch: create/update local tracking branch with `git switch target` (Git creates from remote when unambiguous) or `git switch -c target --track origin/target`.
-- Else: report that `target` does not exist locally or on `origin`; **stop** (do not invent branches).
-
-## Merge steps
-
-1. `git switch target` (or `git checkout target`).
-2. `git merge source` using normal merge defaults (respect repo’s merge/ff configuration).
-3. If merge conflicts: list conflicted files, stop, and tell the user conflicts must be resolved manually while still on **`target`**; do not force-merge, delete work, or switch back to **`source`** until the merge is completed or aborted.
-
-## Aftermath
-
-- After a **successful** merge (no conflicts, merge completed): while still on **`target`**, **push** that branch (`git push` when an upstream exists; otherwise `git push -u origin <target>` when remote `origin` exists—if there is no remote, no `origin`, or push fails, report the error and **stay on `target`**; do not switch back to **`source`** until push succeeds or the user explicitly says in this thread to skip push and switch back).
-- After the push **succeeds**: `git switch source` so HEAD returns to the **original** branch you started on.
-- Do **not** push **`source`** or any other branch as part of this workflow unless the user explicitly asked for that in the same message.
-- No `rebase`, `--force`, `reset --hard`, or history rewrite unless explicitly requested.
+- Do not push `source` or other branches unless this message asks.
+- No rebase, `--force`, or `reset --hard` unless explicitly requested.

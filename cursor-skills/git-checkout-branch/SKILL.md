@@ -1,38 +1,30 @@
 ---
 name: git-checkout-branch
-description: >-
-  Switches to a named branch; if it does not exist locally or on origin,
-  asks for explicit confirmation before creating a new local branch. Use
-  when the user wants to change branches, switch context, or invokes
-  checkout-branch workflows.
+description: Switches to a named branch; creates a new local branch only after explicit confirmation.
 disable-model-invocation: true
 ---
 
 # Git checkout / switch branch
 
-## Branch name
+`branch` = name from this message (trimmed). If missing, ask once and stop.
 
-`branch` = name **the user provided** in the same chat as the command (trim whitespace). If missing, ask once; do not invent names.
+## Steps
 
-## Dirty working tree
+1. `git status --short`. If the working tree is dirty and `git switch` would fail, report and stop — commit/stash/discard only if the user says so in this message.
+2. `git fetch --all` when network is allowed (skip and say so if forbidden).
+3. Resolve and switch:
+   - **Local `branch` exists** → `git switch branch`
+   - **Only on remote** → `git switch branch` if Git tracks it unambiguously; else `git switch -c branch --track origin/branch`
+   - **Neither local nor `origin/branch`** → authorization gate (next section)
+4. **Done when:** HEAD is on `branch`, or you stopped at a hard stop / unanswered create gate.
 
-Run `git status --short`. If there are uncommitted changes, **stop** unless `git switch` can proceed cleanly—if Git errors, report and ask the user to commit, stash, or discard (do not stash/discard unless they explicitly say so in this thread).
+## Authorization gate (missing branch)
 
-## When `branch` already exists locally
+1. State that neither local nor `origin/<branch>` was found.
+2. Ask whether to **create** local `branch` from **current HEAD** (or from a base the user named).
+3. Create only on a clear yes (`yes` / `proceed` / `create it`). Otherwise stop.
+4. On confirm: `git switch -c branch` (or `git switch -c branch <base>` if they named a base).
 
-- `git switch branch` (or `git checkout branch`).
+## Guardrails
 
-## When `branch` exists only on the remote (after `git fetch --all`)
-
-- Prefer `git switch branch` if Git resolves `origin/branch` unambiguously, otherwise `git switch -c branch --track origin/branch`.
-
-## When `branch` does not exist locally or on `origin`
-
-1. Say clearly that neither local nor `origin/<branch>` was found (after a fetch if network is allowed).
-2. **Authorization gate (required):** ask verbatim-style: whether to **create** a new local branch named `branch` from the **current HEAD** (or offer `from origin/<default>` only if the user specified a base—default is current HEAD).
-3. If the user does **not** clearly confirm (yes / proceed / create it), **stop**—do not create the branch.
-4. If they confirm: `git switch -c branch` (from current HEAD). If they asked for a different base, use that base explicitly (e.g. `git switch -c branch origin/main`).
-
-## Safety
-
-- No branch delete, no force, no unrelated checkouts of random SHAs unless the user named a full ref intentionally.
+- No branch delete, force checkout of unrelated SHAs, or inventing names.

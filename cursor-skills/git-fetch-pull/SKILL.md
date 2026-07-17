@@ -1,25 +1,23 @@
 ---
 name: git-fetch-pull
-description: >-
-  Fetches from remotes then pulls the current branch’s upstream so local
-  tracking branches stay current. Use when the user wants to sync with
-  remote, update from origin, or invokes fetch-pull workflows.
+description: Fetches all remotes then pulls the current branch’s upstream.
 disable-model-invocation: true
 ---
 
 # Git fetch and pull
 
-## Workflow
+## Steps
 
-1. From repo root: `git fetch --all`.
-2. Then `git pull` on the **current branch** (uses configured `pull.rebase` / merge behavior—do not override unless the user asked for rebase or merge explicitly in this message).
+1. From the repo root: `git fetch --all`.
+2. `git pull` on the **current** branch (keep the repo’s configured merge/rebase behavior unless this message asks for one explicitly).
+3. **Done when:** fetch finished and the current branch is up to date with its upstream, or you have reported a hard stop (see below) and taken no further git mutation.
 
-## Preconditions and errors
+## Hard stops
 
-- If `git pull` fails because **no upstream** is configured, explain and suggest `git branch -vv` and either `git push -u origin HEAD` after commits or `git branch --set-upstream-to=origin/<branch>`—do not guess remotes.
-- If there are **uncommitted** changes and Git refuses to pull/merge, stop and report; do not stash or discard unless the user explicitly says so in this thread.
+- No upstream → explain; suggest `git branch -vv` and setting upstream. Do not invent remotes.
+- Uncommitted changes block the pull → report and stop. Stash/discard only if the user says so in this message.
 
-## Safety
+## Guardrails
 
-- No `fetch` with destructive refspecs, no `reset --hard`, no force-pull unless explicitly requested.
-- Do not create commits or merge unrelated branches as part of this workflow.
+- No destructive fetch refspecs, force-pull, or `reset --hard` unless explicitly requested.
+- Do not create commits or merge other branches as part of this run.

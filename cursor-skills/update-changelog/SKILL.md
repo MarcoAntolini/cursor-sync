@@ -140,7 +140,7 @@ Include:
 1. **newVersion** and semver rationale  
 2. The new **`## [newVersion] - date`** section (copy from file)  
 3. Table: **file · key · old → new** for every manifest updated  
-4. Reminder: run `/commit-all` and your project’s publish/tag workflow if not asked to commit here  
+4. Reminder: run `git-commit` and your project’s publish/tag workflow if not asked to commit here  
 5. **Do not** `git commit`, `git push`, or `git tag` unless the user explicitly requested it in the same message
 
 ---

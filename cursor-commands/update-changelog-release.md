@@ -19,8 +19,8 @@ Follow **Workflow B — Release** in `.cursor/skills/update-changelog/SKILL.md` 
 ## Do not
 
 - Bump `schemaVersion`, `apiVersion`, or other non-product version fields.
-- `git commit`, `git push`, or `git tag` unless I **explicitly** asked in this same message (otherwise remind me to use `/commit-all` and my publish workflow).
+- `git commit`, `git push`, or `git tag` unless I **explicitly** asked in this same message (otherwise remind me to use `git-commit` and my publish workflow).
 
 ## After this command
 
-Typical follow-up: `/commit-all` → GitHub Release / Thunderstore `tcli publish` / CI release workflow with tag matching `newVersion`.
+Typical follow-up: `git-commit` → GitHub Release / Thunderstore `tcli publish` / CI release workflow with tag matching `newVersion`.

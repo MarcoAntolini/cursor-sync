@@ -67,4 +67,4 @@ versionNumber = "0.2.0"   →   versionNumber = "0.3.0"
 - [ ] `[Unreleased]` refreshed from git
 - [ ] New `## [X.Y.Z] - date` section created; empty `[Unreleased]` above it
 - [ ] All product version manifests match `X.Y.Z`
-- [ ] User commits (`/commit-all`) and runs publish/tag/CI as needed
+- [ ] User commits (`git-commit`) and runs publish/tag/CI as needed
